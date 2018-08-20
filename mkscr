@@ -1,0 +1,76 @@
+#!/bin/bash
+# Title: mkscr
+# Last Updated: 2018.08.18
+# Author; Proticon Konijntjesbroek
+# Description: A script setup scripts
+
+progName=${0##*/}
+callInt="#!/bin/bash"
+author='Proticon Konijntjesbroek'
+xMode='755'
+shName=	
+lastUpdate=$( date +%Y.%m.%d )
+baseDir=
+sDesc=
+optList="NONE"
+interactive=0
+oString=?a:b:d:hio:*
+
+while getopts ${oString} opt; do
+	case ${opt} in
+		h|\?)
+		   printf "Usage:\n\t"
+		   printf "%s\n\t" "${progName} <options> <scriptname>"\
+			   			   ""\
+			               "-a \"Author Name\""\
+						   "-d \"Description of the program\""\
+						   "-i Enter interactive mode"\
+						   "-o \"List of options for the script\"" 
+		   echo 
+		   exit 2 ;;
+		a) author=$OPTARG ;;
+		d) sDesc=$OPTARG ;;
+		i) interactive=$(( "${interactive}" +1 )) ;;
+		o) optList=$OPTARG ;;
+	esac
+done
+shift $(( ${OPTIND} - 1 ))
+
+if [ $# -ne 1 ];then
+   printf "Usage:\n\t"
+   printf "%s\n\t" "${progName} <options> <scriptname>"\
+				   ""\
+				   "-a \"Author Name\""\
+				   "-d \"Description of the program\""\
+				   "-i Enter interactive mode"\
+				   "-o \"List of options for the script\"" 
+   exit 1
+elif [[ $1 = */* ]]; then
+	shName=${1##*/}
+	if [[ $1 = /* ]]; then
+		baseDir=$( dirname ${1} )
+	else
+		baseDir=${PWD}/$( dirname ${1} )
+	fi
+else
+	shName=${1}
+	baseDir="${PWD}"
+fi
+
+if ! [ -d ${baseDir} ]; then
+	printf "%s\n" "${baseDir} not found"
+	exit 1
+elif [ -f ${baseDir}/${shName} ]; then
+	sed -i -e "s/\(^# Last Updated:\).*/\1 ${lastUpdate}/" ${baseDir}/${shName}
+	vim ${baseDir}/${shName}
+else
+	printf "%s\n"\
+		"${callInt}"\
+		"# Title: ${shName}"\
+		"# Last Updated:  ${lastUpdate}"\
+		"# Author: ${author}"\
+		"# Description: ${sDesc}" \
+		"# Options: ${optList}"  >  ${baseDir}/${shName}
+	chmod ${xMode} ${baseDir}/${shName}
+	vim ${baseDir}/${shName}
+fi
