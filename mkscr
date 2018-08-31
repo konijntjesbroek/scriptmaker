@@ -1,6 +1,6 @@
 #!/bin/bash
 # Title: mkscr
-# Last Updated: 2018.08.18
+# Last Updated: 2018.08.21
 # Author; Proticon Konijntjesbroek
 # Description: A script setup scripts
 
@@ -30,7 +30,7 @@ while getopts ${oString} opt; do
 		   exit 2 ;;
 		a) author=$OPTARG ;;
 		d) sDesc=$OPTARG ;;
-		i) interactive=$(( "${interactive}" +1 )) ;;
+		i) interactive=$(( "${interactive}" + 1 )) ;;
 		o) optList=$OPTARG ;;
 	esac
 done
